@@ -43,8 +43,8 @@ def user_picks_square(b)
 end
 
 def computer_picks_square(b)
-  if two_in_a_row?(b)
-    b[two_in_a_row?(b)] = 'O'
+  if position = two_in_a_row?(b)
+    b[position] = 'O'
   else
     computer_selection = empty_positions(b).sample
     b[computer_selection] = 'O'
@@ -53,19 +53,17 @@ end
 
 def two_in_a_row?(b)
   WINNING_COMBINATIONS.each do |line|
-    # This only works once
-    if b.values_at(*line).count('X') == 2 # && (b.values_at(*line).count(' ') == 1) This doesn't work at all
-      line.each do |position| 
-        return position if b[position] != 'X' 
-      end
+    if (b.values_at(*line).count('X') == 2)
+      line.each { |position| return position if b[position] == ' ' }
+    elsif (b.values_at(*line).count('O') == 2) # My attempt to make an offensive move if it's available?
+      line.each { |position| return position if b[position] == ' ' }
     else
-      next
+      return false
     end
   end
 end
 
 def check_for_winner(b)
-  #currently_filled_spaces = empty_positions(b).sort # So this is empty_positions, but ordered
   WINNING_COMBINATIONS.each do |line|
     return "You" if b.values_at(*line).count('X') == 3
     return "Computer" if b.values_at(*line).count('O') == 3
@@ -82,8 +80,8 @@ winner = nil
 loop do
   user_picks_square(board)
   draw_board(board)
-  computer_picks_square(board)
   binding.pry
+  computer_picks_square(board)
   draw_board(board)
   winner = check_for_winner(board)
   break if winner || empty_positions(board).empty?
