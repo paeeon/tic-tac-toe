@@ -75,6 +75,6 @@ if winner == "You"
   puts "You win! Yay!"
 elsif winner == "Computer"
   puts "Computer wins :( Sorry.."
-else
+elsif empty_positions(board).empty?
   puts "It's a tie!"
 end
