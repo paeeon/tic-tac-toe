@@ -10,9 +10,10 @@
 # 
 # if someone has won or lost, alert them. 
 # if there was a tie, let them know. 
-# 
 
 require 'pry'
+
+WINNING_COMBINATIONS = [[1, 2, 3], [1, 5, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [3, 5, 7], [7, 8, 9], [4, 5, 6]]
 
 def initialize_board
   b = {}
@@ -42,14 +43,30 @@ def user_picks_square(b)
 end
 
 def computer_picks_square(b)
-  computer_selection = empty_positions(b).sample
-  b[computer_selection] = 'O'
+  if two_in_a_row?(b)
+    b[two_in_a_row?(b)] = 'O'
+  else
+    computer_selection = empty_positions(b).sample
+    b[computer_selection] = 'O'
+  end
+end
+
+def two_in_a_row?(b)
+  WINNING_COMBINATIONS.each do |line|
+    #This only works once
+    if b.values_at(*line).count('X') == 2 # && (b.values_at(*line).count(' ') == 1) This doesn't work at all
+      line.each do |position| 
+        return position if b[position] != 'X' 
+      end
+    else
+      return nil
+    end
+  end
 end
 
 def check_for_winner(b)
-  winning_combinations = [[1, 2, 3], [1, 5, 9], [1, 4, 7], [2, 5, 8], [3, 6, 9], [3, 5, 7], [7, 8, 9], [4, 5, 6]]
   #currently_filled_spaces = empty_positions(b).sort # So this is empty_positions, but ordered
-  winning_combinations.each do |line|
+  WINNING_COMBINATIONS.each do |line|
     return "You" if b.values_at(*line).count('X') == 3
     return "Computer" if b.values_at(*line).count('O') == 3
   end
@@ -66,6 +83,7 @@ loop do
   user_picks_square(board)
   draw_board(board)
   computer_picks_square(board)
+  binding.pry
   draw_board(board)
   winner = check_for_winner(board)
   break if winner || empty_positions(board).empty?
