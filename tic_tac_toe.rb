@@ -53,13 +53,13 @@ end
 
 def two_in_a_row?(b)
   WINNING_COMBINATIONS.each do |line|
-    #This only works once
+    # This only works once
     if b.values_at(*line).count('X') == 2 # && (b.values_at(*line).count(' ') == 1) This doesn't work at all
       line.each do |position| 
         return position if b[position] != 'X' 
       end
     else
-      return nil
+      next
     end
   end
 end
